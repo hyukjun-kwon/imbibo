@@ -1,60 +1,37 @@
 $(document).ready(function() {
-  $('.ui.accordion').accordion();
-
-  
-  
-  
- 
+  $(".ui.accordion").accordion();
 
   function search(searchString) {
-    $("#results").empty();
-    let queryURL = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=" + searchString;
-
-    $.ajax({
-      url: queryURL,
-      method: "GET"
-    }).then(function(response) {
-      console.log(response);
-      let drinks = response.drinks;
-      for(drink of drinks) {
-        $("#results").append(generateDrinkListing(drink.idDrink));
-      }
-    });
+    
   }
 
-  function drinkNameInfo(y) {
-    let drinkname = y
-    let drinknameURL = https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${drinkname};
+  function buildResult(drinkArray) {
+    // drinkArray is an array of drinkID's
+    let arrayLength = drinkArray.length;
 
+    // if array is empty, just return
+    if(arrayLength === 0) {
+      return;
+    }
 
-    $.ajax({
-        url: drinknameURL,
-        method: "GET"
-      }).then(function(response) {
-        let drinkArray = []
+    // empty out the result section first
+    $("#results").empty();
 
-        for (let i=0; i < response.drinks.length; i++) {
-            let drinkI = response.drinks[i].idDrink;
-            let drinkN = response.drinks[i].strDrink;
-            drinkArray.push({
-                drinkName: drinkName,
-                drinkID: drinkI
-            });
-        }
-        console.log(drinkArray[0].drinkName)
-      });
-}
+    // for each drink ID, build and append to the result the drink listing
+    for(drinkID of drinkArray) {
+      $("#results").append(generateDrinkListing(drinkID));
+    }
 
+  }
 
   function generateDrinkListing(drinkID) {
-    let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkID}`
+    let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkID}`;
     let returnElement = $("<div>").addClass("ui segment");
 
     $.ajax({
       url: queryURL,
       method: "GET"
     }).then(function(response) {
-      
       let drink = response.drinks[0];
 
       returnElement.append(`
@@ -89,21 +66,16 @@ $(document).ready(function() {
       </div>
 
     </div>
-    `)
-      
-      
-      
+    `);
     });
 
     return returnElement;
   }
 
-  $("#search-input").on("keydown", function(event){
+  $("#search-input").on("keydown", function(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
       search($(this).val());
     }
   });
-
-
 });
