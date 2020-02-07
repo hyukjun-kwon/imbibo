@@ -20,9 +20,31 @@ $(document).ready(function() {
         $("#results").append(generateDrinkListing(drink.idDrink));
       }
     });
-
-    $(".ui.accordion").accordion();
   }
+
+  function drinkNameInfo(y) {
+    let drinkname = y
+    let drinknameURL = https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${drinkname};
+
+
+    $.ajax({
+        url: drinknameURL,
+        method: "GET"
+      }).then(function(response) {
+        let drinkArray = []
+
+        for (let i=0; i < response.drinks.length; i++) {
+            let drinkI = response.drinks[i].idDrink;
+            let drinkN = response.drinks[i].strDrink;
+            drinkArray.push({
+                drinkName: drinkName,
+                drinkID: drinkI
+            });
+        }
+        console.log(drinkArray[0].drinkName)
+      });
+}
+
 
   function generateDrinkListing(drinkID) {
     let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkID}`
