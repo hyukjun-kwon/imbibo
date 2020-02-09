@@ -21,6 +21,19 @@
   </head>
 
   <body>
+    <!-- Side Bar -->
+    <div class="ui vertical inverted sidebar menu">
+      <a class="active item">Saved Cocktails</a>
+      <div id="saved-cocktails">
+        <a class="item">Cocktail 1</a>
+        <a class="item">Cocktail 2</a>
+        <a class="item">Cocktail 3</a>
+        <a class="item">Cocktail 4</a>
+        <a class="item">Cocktail 5</a>
+      </div>
+      <a class="active item manage-saved">Manage Saved</a>
+    </div>
+
     <!-- Page Contents -->
     <div class="pusher">
       <div class="ui inverted vertical masthead center aligned segment">
@@ -30,7 +43,7 @@
               <i class="sidebar icon"></i>
             </a>
             <div class="right item">
-              <a class="ui inverted button">Bars Nearby</a>
+              <a class="ui inverted button find-bars-button">Bars Nearby</a>
             </div>
           </div>
         </div>
@@ -56,8 +69,8 @@
         </div>
       </div>
 
-      <div class="ui grid">
-        <div class="sixteen wide mobile four wide computer column">
+      <div class="ui centered grid">
+        <div class="sixteen wide mobile five wide tablet three wide computer column">
           <!--Accordion dropdown menu-->
           <div class="ui segment raised">
             <div class="ui accordion">
@@ -116,8 +129,9 @@
 
 
       
-        <div class="sixteen wide mobile twelve wide computer column">
+        <div class="sixteen wide mobile nine wide tablet seven wide computer column">
           <div id="results" class="ui segments">
+            
 
           </div> <!--/ui segments-->
         </div> <!--results column-->
