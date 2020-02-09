@@ -1,27 +1,108 @@
 $(document).ready(function() {
+  /************************************************ initialize Semantic UI Modules ************************************************/
   $(".ui.accordion").accordion();
+  $(".ui.sidebar").sidebar("attach events", ".toc.item");
 
-  function search(searchString) {
-    
+  /********************************************************* Save functions ********************************************************/
+
+  // Load saved cocktails from local storage
+  let savedList = JSON.parse(localStorage.getItem("saved-cocktails"));
+
+  // If data does not exist, create an empty array
+  if (savedList === null) {
+    // each element in savedList must be {drinkID: string, drinkName: string}
+    savedList = [];
   }
 
-  function buildResult(drinkArray) {
-    // drinkArray is an array of drinkID's
-    let arrayLength = drinkArray.length;
+  renderSaved();
 
-    // if array is empty, just return
-    if(arrayLength === 0) {
-      return;
+  function renderSaved() {
+    let listLength = savedList.length;
+
+    $("#saved-cocktails").empty();
+    for (let i = 0; i < listLength; i++) {
+      $("#saved-cocktails").append(generateSavedItem(savedList[i]));
     }
+  }
 
-    // empty out the result section first
-    $("#results").empty();
+  /******************************************************** Search bar functions *****************************************************/
+  
+  // First, search for a drink name
+  function search(searchString) {
+    let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${searchString}`;
 
-    // for each drink ID, build and append to the result the drink listing
-    for(drinkID of drinkArray) {
-      $("#results").append(generateDrinkListing(drinkID));
-    }
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).then(function(response) {
+      if (response.drinks !== null) {
+        let searchArray = [];
+        let len = response.drinks.length;
+        for (let i = 0; i < len; i++) {
+          searchArray.push(response.drinks[i].idDrink);
+        }
 
+        // drinkArray is an array of drinkID's
+        let arrayLength = searchArray.length;
+
+        // if array is empty, just return
+        if (arrayLength === 0) {
+          return;
+        }
+
+        // empty out the result section first
+        $("#results").empty();
+
+        // for each drink ID, build and append to the result the drink listing
+        for (drinkID of searchArray) {
+          $("#results").append(generateDrinkListing(drinkID));
+        }
+
+        $(".ui.accordion").accordion();
+      } else {
+        secondarySearch(searchString);
+      }
+    });
+  }
+
+  // When drink name search is not returning, try ingredient search
+  function secondarySearch(searchString) {
+    queryURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${searchString}`;
+
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).then(function(res) {
+      let searchArray = [];
+
+      if (res.drinks !== "") {
+        let len = res.drinks.length;
+        for (let i = 0; i < len; i++) {
+          if (searchArray.indexOf(res.drinks[i].idDrink) === -1) {
+            searchArray.push(res.drinks[i].idDrink);
+          }
+        }
+      }
+
+      // drinkArray is an array of drinkID's
+      let arrayLength = searchArray.length;
+      console.log(searchArray);
+
+      // if array is empty, just return
+      if (arrayLength === 0) {
+        return;
+      }
+
+      // empty out the result section first
+      $("#results").empty();
+
+      // for each drink ID, build and append to the result the drink listing
+      for (drinkID of searchArray) {
+        $("#results").append(generateDrinkListing(drinkID));
+      }
+
+      $(".ui.accordion").accordion();
+    });
   }
 
   function generateDrinkListing(drinkID) {
@@ -31,51 +112,330 @@ $(document).ready(function() {
     $.ajax({
       url: queryURL,
       method: "GET"
-    }).then(function(response) {
-      let drink = response.drinks[0];
+    }).then(function(resp) {
+      let drink = resp.drinks[0];
+
+      let ingredients = "";
+      let measures = "";
+      let counter = 1;
+
+      while (
+        resp.drinks[0][`strIngredient${counter}`] != null ||
+        resp.drinks[0][`strMeasure${counter}`] != null
+      ) {
+        ingredients += resp.drinks[0][`strIngredient${counter}`] + "<br>";
+        if (resp.drinks[0][`strMeasure${counter}`] === null) {
+          measures += "<br>";
+        } else {
+          measures += resp.drinks[0][`strMeasure${counter}`] + "<br>";
+        }
+
+        counter++;
+      }
+
+      let ingredientSection = `
+              <table class="ui striped table">
+                <thead>
+                  <tr>
+                    <th>Ingredients:</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="top aligned">
+                    <td>${ingredients}</td>
+                    <td>${measures}</td>
+                  </tr>
+                </tbody>
+              </table>
+              `;
 
       returnElement.append(`
-      <div class="ui accordion">
+              <div class="ui accordion">
 
-      <!--title section of the collapsible-->
-      <div class="title">
-        <div class="ui grid">
+              <!--title section of the collapsible-->
+              <div class="title">
+                <div class="ui grid">
 
-          <!--cocktail image thumbnail-->
-          <div class="five wide mobile column">
-            <img id="cocktail-image-0" class="ui bordered medium image" src="${drink.strDrinkThumb}">
-          </div>
+                  <!--cocktail image thumbnail-->
+                  <div class="four wide mobile column">
+                    <img class="ui bordered medium image" src="${drink.strDrinkThumb}">
+                  </div>
 
-          <!--cocktail name-->
-          <div class="eleven wide mobile column ">
-            <h3 id="cocktail-name-0">${drink.strDrink}</h3>
-          </div>
+                  <!--cocktail name-->
+                  <div class="twelve wide mobile column">
+                    <h3>${drink.strDrink}</h3>
+                  </div>
 
-        </div>
-      </div>
+                </div>
+              </div>
 
-      <!--content section of the collapsible-->
-      <div class="content">
+              <!--content section of the collapsible-->
+              <div class="content">
 
-        <!--cocktail instruction, ingredients etc-->
-        <div id="cocktail-content-0">
-          <h5>Instruction:</h5>
-          <p>${drink.strInstructions}</p>
-        </div>
+                <!--cocktail instruction, ingredients etc-->
+                <div class="ui grid">
+                  <div class="twelve wide mobile column">
+                    <h5>Instruction:</h5>
+                    <p>${drink.strInstructions}</p>
+                    ${ingredientSection}
+                  </div>
 
-      </div>
+                  <div class="four wide mobile four wide tablet three wide computer right floated column">
+                    <button class="ui secondary button save-button" data-drinkid="${drink.idDrink}" data-drinkName="${drink.strDrink}">Save</button>
+                  </div>
+                </div>
 
-    </div>
+              </div>
+
+            </div>
     `);
     });
 
     return returnElement;
   }
 
+  function generateSavedItem(drink) {
+    let returnElement = $("<a>").addClass("item saved-cocktail");
+    returnElement.attr("data-drinkid", drink.drinkID);
+    returnElement.text(drink.drinkName);
+
+    return returnElement;
+  }
+
+  $(".manage-saved").on("click", function(event) {
+    console.log("manage-saved clicked, function not yet defined");
+    event.preventDefault();
+    $("#results").empty();
+    renderManageSaved();
+  });
+
+  $("#saved-cocktails").on("click", ".saved-cocktail", function(event) {
+    console.log("saved-cocktail clicked, function not yet defined");
+    event.preventDefault();
+    $("#results").empty();
+    renderSavedCocktail($(this).attr("data-drinkid"));
+  });
+
+  $("#results").on("click", ".save-button", function(event) {
+    event.preventDefault();
+    let drinkID = $(this).attr("data-drinkid");
+    let drinkName = $(this).attr("data-drinkName");
+
+    // If it does not exist in the saved list
+    if (savedList.findIndex(i => i.drinkID === drinkID) === -1) {
+      savedList.push({
+        drinkID: drinkID,
+        drinkName: drinkName
+      });
+
+      // update local storage
+      localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
+
+      // update saved list
+      renderSaved();
+    }
+  });
+
+  $("#results").on("click", ".delete-button", function(event) {
+    event.preventDefault();
+    let drinkID = $(this).attr("data-drinkid");
+    let index = savedList.findIndex(i => i.drinkID === drinkID);
+
+    savedList.splice(index,1);
+    
+    localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
+    renderSaved();
+    renderManageSaved();
+  });
+
+  /****************************************************** Get Nearby Bars Information ******************************************************/
+
+  function getBarLocations() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    }
+  }
+
+  function showPosition(position) {
+    let lat = position.coords.latitude;
+    let long = position.coords.longitude;
+    let limit = 4;
+    let secret =
+      "zu2Q5R-_5slDM_BVx8NcmVC9ErXdid6zwBeDJO_lOg4U5Ou3tCKlqBCw6Z8RBFwRDBDm9tIpF8k5pOu0Y8siqXpPXy_MN1O3bA-5a49fmXwHiT8111nlec2GV5I8XnYx";
+    let barURL = `https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=bar&limit=${limit}&latitude=${lat}&longitude=${long}`;
+
+    $.ajax({
+      url: barURL,
+      method: "GET",
+      dataType: "json",
+      headers: {
+        Authorization: `Bearer ${secret}`
+      }
+    }).then(data => {
+      console.log(data);
+
+      $("#results").empty();
+
+      let segments = $("<div>").addClass("ui segments");
+
+      for (let i = 0; i < data.businesses.length; i++) {
+        let seg = $("<div>").addClass("ui segment");
+        let uiGrid = $("<div>").addClass("ui grid");
+        uiGrid.append(`
+              <div class="eight wide mobile column>
+                <img class="ui image" src="${data.businesses[i].image_url}">
+              </div>
+              
+              <div class="eight wide mobile column">
+                <h4>${data.businesses[i].name}</h4>
+                <h5>Phone: ${data.businesses[i].phone}</h5>
+                <h5>Address: ${data.businesses[i].location.address1 +
+                  ", " +
+                  data.businesses[i].location.city}</h5>
+              </div>
+              `);
+
+        seg.append(uiGrid);
+        segments.append(seg);
+
+        console.log(data.businesses[i].name);
+        console.log("Business ID: " + data.businesses[i].id);
+        console.log(data.businesses[i].image_url);
+        console.log(
+          data.businesses[i].location.address1 +
+            ", " +
+            data.businesses[i].location.city
+        );
+        console.log("Contact: " + data.businesses[i].phone);
+        let distance = getMiles(data.businesses[i].distance);
+        let rating = data.businesses[i].rating + " star rating on Yelp";
+        console.log(rating);
+        console.log(distance + " miles away");
+      }
+
+      $("#results").append(segments);
+    });
+  }
+
+  function getMiles(i) {
+    return Number(i * 0.000621371192).toFixed(2);
+  }
+  /******************************************************* Side bar functions *******************************************************/
+  function renderSavedCocktail(drinkID) {
+
+    let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkID}`;
+    let returnElement = $("<div>").addClass("ui segment");
+
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).then(function(resp) {
+      let drink = resp.drinks[0];
+
+      let ingredients = "";
+      let measures = "";
+      let counter = 1;
+
+      while (
+        resp.drinks[0][`strIngredient${counter}`] != null ||
+        resp.drinks[0][`strMeasure${counter}`] != null
+      ) {
+        ingredients += resp.drinks[0][`strIngredient${counter}`] + "<br>";
+        if (resp.drinks[0][`strMeasure${counter}`] === null) {
+          measures += "<br>";
+        } else {
+          measures += resp.drinks[0][`strMeasure${counter}`] + "<br>";
+        }
+
+        counter++;
+      }
+
+      let ingredientSection = `
+              <table class="ui striped table">
+                <thead>
+                  <tr>
+                    <th>Ingredients:</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="top aligned">
+                    <td>${ingredients}</td>
+                    <td>${measures}</td>
+                  </tr>
+                </tbody>
+              </table>
+              `;
+
+      returnElement.append(`
+                <div class="ui grid">
+
+                  <!--cocktail image thumbnail-->
+                  <div class="four wide mobile column">
+                    <img class="ui bordered medium image" src="${drink.strDrinkThumb}">
+                  </div>
+
+                  <!--cocktail name-->
+                  <div class="twelve wide mobile column">
+                    <h3>${drink.strDrink}</h3>
+                  </div>
+
+                </div>
+            
+
+                <!--cocktail instruction, ingredients etc-->
+                <div class="ui grid">
+                  <div class="twelve wide mobile column">
+                    <h5>Instruction:</h5>
+                    <p>${drink.strInstructions}</p>
+                    ${ingredientSection}
+                  </div>
+
+                  <div class="four wide mobile four wide tablet three wide computer right floated column">
+                    <button class="ui red button delete-button" data-drinkid="${drink.idDrink}" data-drinkName="${drink.strDrink}">Delete</button>
+                  </div>
+
+              </div>
+
+            </div>
+    `);
+    });
+
+    $("#results").append(returnElement);
+  }
+
+  function renderManageSaved() {
+    let arrLen = savedList.length;
+
+    if(arrLen != 0) {
+      $("#results").empty();
+      for(let i=0; i < arrLen; i++) {
+        renderSavedCocktail(savedList[i].drinkID);
+      }
+    }
+
+  }
+
+  /******************************************************** Event Listeners **********************************************************/
+
+  // In case accordion doesn't initialize, initialize again on click
+  $("#results").on("click", function(event) {
+    $(".ui.accordion").accordion();
+  });
+
+  $(".find-bars-button").on("click", function(event) {
+    event.preventDefault();
+    getBarLocations();
+  });
+
   $("#search-input").on("keydown", function(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
       search($(this).val());
+      setTimeout(function() {
+        $(".ui.accordion").accordion();
+      }, 3000);
     }
   });
 });
