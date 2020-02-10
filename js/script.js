@@ -410,7 +410,7 @@ $(document).ready(function() {
 
   $(".glass-button").on("click", function(event) {
     event.preventDefault();
-    searchByGlassType($(this).text());
+    searchByGlassType(($(this).text()).trim());
     setTimeout(function() {
       $(".ui.accordion").accordion();
     }, 2000);
@@ -418,7 +418,7 @@ $(document).ready(function() {
 
   $(".spirit-button").on("click", function(event) {
     event.preventDefault();
-    search($(this).text());
+    search(($(this).text()).trim());
     setTimeout(function() {
       $(".ui.accordion").accordion();
     }, 2000);
