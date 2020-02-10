@@ -59,10 +59,9 @@ $(document).ready(function() {
         }
 
         $(".ui.accordion").accordion();
-      } 
+      }
 
       secondarySearch(searchString);
-      
     });
   }
 
@@ -227,8 +226,6 @@ $(document).ready(function() {
         Authorization: `Bearer ${secret}`
       }
     }).then(data => {
-      console.log(data);
-
       $("#results").empty();
 
       let segments = $("<div>").addClass("ui segments");
@@ -249,15 +246,20 @@ $(document).ready(function() {
         let uiGrid = $("<div>").addClass("ui grid");
         uiGrid.append(`
               <div class="twelve wide mobile column">
-                <i class="red yelp icon"></i><a target="_blank" href="${data.businesses[i].url}"><b>${data.businesses[i].name}</b></a>
+                <i class="red yelp icon"></i><a target="_blank" href="${
+                  data.businesses[i].url
+                }"><b>${data.businesses[i].name}</b></a>
                 <hr>
                 <h5 class="grey-text">Yelp rating: ${starRating}</h5>
                 <h5 class="grey-text">Phone: ${data.businesses[i].phone}</h5>
-                <h5 class="grey-text">Address: ${data.businesses[i].location.address1 +
+                <h5 class="grey-text">Address: ${data.businesses[i].location
+                  .address1 +
                   ", " +
                   data.businesses[i].location.city}</h5>
               
-                <h5 class="grey-text">  ${getMiles(data.businesses[i].distance)} miles away</h5>
+                <h5 class="grey-text">  ${getMiles(
+                  data.businesses[i].distance
+                )} miles away</h5>
               </div>
               `);
 
@@ -369,8 +371,7 @@ $(document).ready(function() {
   /****************************************************** Search Bar Functions ********************************************************/
 
   function searchByGlassType(glassType) {
-    
-    let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?g=${glassType}`
+    let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?g=${glassType}`;
 
     $.ajax({
       url: queryURL,
@@ -379,10 +380,9 @@ $(document).ready(function() {
       $("#results").empty();
       let drinks = res.drinks;
 
-      for(drink of drinks) {
+      for (drink of drinks) {
         $("#results").append(generateDrinkListing(drink.idDrink));
       }
-
     });
   }
 
@@ -423,54 +423,51 @@ $(document).ready(function() {
       $(".ui.accordion").accordion();
     }, 2000);
   });
-});
 
+  $(".manage-saved").on("click", function(event) {
+    event.preventDefault();
+    $("#results").empty();
+    renderManageSaved();
+  });
 
-$(".manage-saved").on("click", function(event) {
-  console.log("manage-saved clicked, function not yet defined");
-  event.preventDefault();
-  $("#results").empty();
-  renderManageSaved();
-});
+  $("#saved-cocktails").on("click", ".saved-cocktail", function(event) {
+    event.preventDefault();
+    $("#results").empty();
+    renderSavedCocktail($(this).attr("data-drinkid"));
+  });
 
-$("#saved-cocktails").on("click", ".saved-cocktail", function(event) {
-  console.log("saved-cocktail clicked, function not yet defined");
-  event.preventDefault();
-  $("#results").empty();
-  renderSavedCocktail($(this).attr("data-drinkid"));
-});
+  $("#results").on("click", ".save-button", function(event) {
+    event.preventDefault();
+    $(this).text("Saved");
+    $(this).removeClass("secondary");
+    $(this).addClass("green");
+    let drinkID = $(this).attr("data-drinkid");
+    let drinkName = $(this).attr("data-drinkName");
 
-$("#results").on("click", ".save-button", function(event) {
-  event.preventDefault();
-  $(this).text("Saved");
-  $(this).removeClass("secondary");
-  $(this).addClass("green");
-  let drinkID = $(this).attr("data-drinkid");
-  let drinkName = $(this).attr("data-drinkName");
+    // If it does not exist in the saved list
+    if (savedList.findIndex(i => i.drinkID === drinkID) === -1) {
+      savedList.push({
+        drinkID: drinkID,
+        drinkName: drinkName
+      });
 
-  // If it does not exist in the saved list
-  if (savedList.findIndex(i => i.drinkID === drinkID) === -1) {
-    savedList.push({
-      drinkID: drinkID,
-      drinkName: drinkName
-    });
+      // update local storage
+      localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
 
-    // update local storage
+      // update saved list
+      renderSaved();
+    }
+  });
+
+  $("#results").on("click", ".delete-button", function(event) {
+    event.preventDefault();
+    let drinkID = $(this).attr("data-drinkid");
+    let index = savedList.findIndex(i => i.drinkID === drinkID);
+
+    savedList.splice(index, 1);
+
     localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
-
-    // update saved list
     renderSaved();
-  }
-});
-
-$("#results").on("click", ".delete-button", function(event) {
-  event.preventDefault();
-  let drinkID = $(this).attr("data-drinkid");
-  let index = savedList.findIndex(i => i.drinkID === drinkID);
-
-  savedList.splice(index, 1);
-
-  localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
-  renderSaved();
-  renderManageSaved();
+    renderManageSaved();
+  });
 });
