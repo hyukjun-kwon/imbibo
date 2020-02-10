@@ -3,6 +3,16 @@ $(document).ready(function() {
   $(".ui.accordion").accordion();
   $(".ui.sidebar").sidebar("attach events", ".toc.item");
 
+  /****************************************** Display Current Time at the Header Jumbotron ****************************************/
+  // Initial display
+  let currentTime = $("#current-time");
+  currentTime.text(moment().format("MMMM Do YYYY, h:mm:ss A"));
+  // Refresh every second
+  let headerTimer = setInterval(function() {
+    currentTime.text(moment().format("MMMM Do YYYY, h:mm:ss A"));
+  }, 1000);
+  $("#current-date").text(moment().format("YYYY - MMMM - DD"));
+
   /********************************************************* Save functions ********************************************************/
 
   // Load saved cocktails from local storage
@@ -366,6 +376,17 @@ $(document).ready(function() {
         renderSavedCocktail(savedList[i].drinkID);
       }
     }
+
+    if(arrLen === 0) {
+      $("#results").empty();
+      $("#results").append(`
+      <div class="ui message">
+        <div class="header">
+          There isn't any cocktail in the saved cocktails
+        </div>
+      </div>
+      `);
+    }
   }
 
   /****************************************************** Search Bar Functions ********************************************************/
@@ -426,7 +447,6 @@ $(document).ready(function() {
 
   $(".manage-saved").on("click", function(event) {
     event.preventDefault();
-    $("#results").empty();
     renderManageSaved();
   });
 
