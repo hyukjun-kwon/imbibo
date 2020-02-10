@@ -26,7 +26,7 @@ $(document).ready(function() {
   }
 
   /******************************************************** Search bar functions *****************************************************/
-  
+
   // First, search for a drink name
   function search(searchString) {
     let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${searchString}`;
@@ -59,9 +59,10 @@ $(document).ready(function() {
         }
 
         $(".ui.accordion").accordion();
-      } else {
-        secondarySearch(searchString);
-      }
+      } 
+
+      secondarySearch(searchString);
+      
     });
   }
 
@@ -86,7 +87,6 @@ $(document).ready(function() {
 
       // drinkArray is an array of drinkID's
       let arrayLength = searchArray.length;
-      console.log(searchArray);
 
       // if array is empty, just return
       if (arrayLength === 0) {
@@ -203,52 +203,6 @@ $(document).ready(function() {
     return returnElement;
   }
 
-  $(".manage-saved").on("click", function(event) {
-    console.log("manage-saved clicked, function not yet defined");
-    event.preventDefault();
-    $("#results").empty();
-    renderManageSaved();
-  });
-
-  $("#saved-cocktails").on("click", ".saved-cocktail", function(event) {
-    console.log("saved-cocktail clicked, function not yet defined");
-    event.preventDefault();
-    $("#results").empty();
-    renderSavedCocktail($(this).attr("data-drinkid"));
-  });
-
-  $("#results").on("click", ".save-button", function(event) {
-    event.preventDefault();
-    let drinkID = $(this).attr("data-drinkid");
-    let drinkName = $(this).attr("data-drinkName");
-
-    // If it does not exist in the saved list
-    if (savedList.findIndex(i => i.drinkID === drinkID) === -1) {
-      savedList.push({
-        drinkID: drinkID,
-        drinkName: drinkName
-      });
-
-      // update local storage
-      localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
-
-      // update saved list
-      renderSaved();
-    }
-  });
-
-  $("#results").on("click", ".delete-button", function(event) {
-    event.preventDefault();
-    let drinkID = $(this).attr("data-drinkid");
-    let index = savedList.findIndex(i => i.drinkID === drinkID);
-
-    savedList.splice(index,1);
-    
-    localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
-    renderSaved();
-    renderManageSaved();
-  });
-
   /****************************************************** Get Nearby Bars Information ******************************************************/
 
   function getBarLocations() {
@@ -280,38 +234,35 @@ $(document).ready(function() {
       let segments = $("<div>").addClass("ui segments");
 
       for (let i = 0; i < data.businesses.length; i++) {
+        let rating = data.businesses[i].rating;
+        let starRating = "";
+        let starCount = 0;
+        while (starCount < rating) {
+          starRating += '<i class="fa fa-star"></i>';
+          starCount++;
+        }
+        while (starCount < 5) {
+          starRating += '<i class="far fa-star"></i>';
+          starCount++;
+        }
         let seg = $("<div>").addClass("ui segment");
         let uiGrid = $("<div>").addClass("ui grid");
         uiGrid.append(`
-              <div class="eight wide mobile column>
-                <img class="ui image" src="${data.businesses[i].image_url}">
-              </div>
-              
-              <div class="eight wide mobile column">
-                <h4>${data.businesses[i].name}</h4>
-                <h5>Phone: ${data.businesses[i].phone}</h5>
-                <h5>Address: ${data.businesses[i].location.address1 +
+              <div class="twelve wide mobile column">
+                <i class="red yelp icon"></i><a target="_blank" href="${data.businesses[i].url}"><b>${data.businesses[i].name}</b></a>
+                <hr>
+                <h5 class="grey-text">Yelp rating: ${starRating}</h5>
+                <h5 class="grey-text">Phone: ${data.businesses[i].phone}</h5>
+                <h5 class="grey-text">Address: ${data.businesses[i].location.address1 +
                   ", " +
                   data.businesses[i].location.city}</h5>
+              
+                <h5 class="grey-text">  ${getMiles(data.businesses[i].distance)} miles away</h5>
               </div>
               `);
 
         seg.append(uiGrid);
         segments.append(seg);
-
-        console.log(data.businesses[i].name);
-        console.log("Business ID: " + data.businesses[i].id);
-        console.log(data.businesses[i].image_url);
-        console.log(
-          data.businesses[i].location.address1 +
-            ", " +
-            data.businesses[i].location.city
-        );
-        console.log("Contact: " + data.businesses[i].phone);
-        let distance = getMiles(data.businesses[i].distance);
-        let rating = data.businesses[i].rating + " star rating on Yelp";
-        console.log(rating);
-        console.log(distance + " miles away");
       }
 
       $("#results").append(segments);
@@ -323,7 +274,6 @@ $(document).ready(function() {
   }
   /******************************************************* Side bar functions *******************************************************/
   function renderSavedCocktail(drinkID) {
-
     let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkID}`;
     let returnElement = $("<div>").addClass("ui segment");
 
@@ -408,13 +358,32 @@ $(document).ready(function() {
   function renderManageSaved() {
     let arrLen = savedList.length;
 
-    if(arrLen != 0) {
+    if (arrLen != 0) {
       $("#results").empty();
-      for(let i=0; i < arrLen; i++) {
+      for (let i = 0; i < arrLen; i++) {
         renderSavedCocktail(savedList[i].drinkID);
       }
     }
+  }
 
+  /****************************************************** Search Bar Functions ********************************************************/
+
+  function searchByGlassType(glassType) {
+    
+    let queryURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?g=${glassType}`
+
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).then(function(res) {
+      $("#results").empty();
+      let drinks = res.drinks;
+
+      for(drink of drinks) {
+        $("#results").append(generateDrinkListing(drink.idDrink));
+      }
+
+    });
   }
 
   /******************************************************** Event Listeners **********************************************************/
@@ -435,7 +404,73 @@ $(document).ready(function() {
       search($(this).val());
       setTimeout(function() {
         $(".ui.accordion").accordion();
-      }, 3000);
+      }, 2000);
     }
   });
+
+  $(".glass-button").on("click", function(event) {
+    event.preventDefault();
+    searchByGlassType($(this).text());
+    setTimeout(function() {
+      $(".ui.accordion").accordion();
+    }, 2000);
+  });
+
+  $(".spirit-button").on("click", function(event) {
+    event.preventDefault();
+    search($(this).text());
+    setTimeout(function() {
+      $(".ui.accordion").accordion();
+    }, 2000);
+  });
+});
+
+
+$(".manage-saved").on("click", function(event) {
+  console.log("manage-saved clicked, function not yet defined");
+  event.preventDefault();
+  $("#results").empty();
+  renderManageSaved();
+});
+
+$("#saved-cocktails").on("click", ".saved-cocktail", function(event) {
+  console.log("saved-cocktail clicked, function not yet defined");
+  event.preventDefault();
+  $("#results").empty();
+  renderSavedCocktail($(this).attr("data-drinkid"));
+});
+
+$("#results").on("click", ".save-button", function(event) {
+  event.preventDefault();
+  $(this).text("Saved");
+  $(this).removeClass("secondary");
+  $(this).addClass("green");
+  let drinkID = $(this).attr("data-drinkid");
+  let drinkName = $(this).attr("data-drinkName");
+
+  // If it does not exist in the saved list
+  if (savedList.findIndex(i => i.drinkID === drinkID) === -1) {
+    savedList.push({
+      drinkID: drinkID,
+      drinkName: drinkName
+    });
+
+    // update local storage
+    localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
+
+    // update saved list
+    renderSaved();
+  }
+});
+
+$("#results").on("click", ".delete-button", function(event) {
+  event.preventDefault();
+  let drinkID = $(this).attr("data-drinkid");
+  let index = savedList.findIndex(i => i.drinkID === drinkID);
+
+  savedList.splice(index, 1);
+
+  localStorage.setItem("saved-cocktails", JSON.stringify(savedList));
+  renderSaved();
+  renderManageSaved();
 });
