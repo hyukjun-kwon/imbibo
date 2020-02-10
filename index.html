@@ -13,9 +13,12 @@
       integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="css/style.css">
 
     <!--Title-->
-    <title>COCKTAIL FINDER</title>
+    <title>Imbibo: Find Your Favorite Cocktail</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
     <!--Mobile-friendly-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
@@ -23,15 +26,10 @@
   <body>
     <!-- Side Bar -->
     <div class="ui vertical inverted sidebar menu">
-      <a class="active item">Saved Cocktails</a>
+      <a class="active item">saved cocktails</a>
       <div id="saved-cocktails">
-        <a class="item">Cocktail 1</a>
-        <a class="item">Cocktail 2</a>
-        <a class="item">Cocktail 3</a>
-        <a class="item">Cocktail 4</a>
-        <a class="item">Cocktail 5</a>
       </div>
-      <a class="active item manage-saved">Manage Saved</a>
+      <a class="active item manage-saved">manage saved</a>
     </div>
 
     <!-- Page Contents -->
@@ -40,19 +38,17 @@
         <div class="ui container">
           <div class="ui large secondary inverted pointing menu">
             <a class="toc item">
-              <i class="sidebar icon"></i>
+              <i class="save icon"></i>
             </a>
             <div class="right item">
-              <a class="ui inverted button find-bars-button">Bars Nearby</a>
+              <a class="ui inverted button find-bars-button"><i class="cocktail icon"></i>bars nearby</a>
             </div>
           </div>
         </div>
 
-        <div class="ui text inverted very padded segment">
-          <h1 class="ui header">
-            Just Drinkk
-          </h1>
-          <h2>Find your favorite cocktails here</h2>
+        <div class="ui inverted very padded segment">
+          <img class="ui centered small image" src="logo.png">
+          <h2>search for a <span style="color: hotpink">cocktail</span> or an <span style="color: hotpink">ingredient</span></h2>
           <!--Search: #search-input-->
           <div class="ui search">
             <div class="ui icon input">
@@ -60,7 +56,6 @@
                 id="search-input"
                 class="prompt"
                 type="text"
-                placeholder="Ingredient or Drink name"
               />
               <i class="search icon"></i>
             </div>
@@ -70,72 +65,114 @@
       </div>
 
       <div class="ui centered grid">
-        <div class="sixteen wide mobile five wide tablet three wide computer column">
+        <div
+          class="sixteen wide mobile five wide tablet three wide computer column"
+        >
           <!--Accordion dropdown menu-->
-          <div class="ui segment raised">
+          <div id="search-panel" class="ui segment raised">
             <div class="ui accordion">
               <div class="title">
                 <i class="dropdown icon"></i>
-                Search Options
+                Search by Glass Type
               </div>
               <div class="content">
-                <div class="ui toggle checkbox">
-                  <input type="checkbox" name="alc-only">
-                  <label>Show only alcoholic</label>
-                </div>
-                <br><br>
-                <div class="ui toggle checkbox">
-                  <input type="checkbox" name="iba-only">
-                  <label>Show only IBA-Certified cocktails</label>
-                </div>
-                <br>
-                <div class="accordion">
-                  <div class="title">
-                    <i class="dropdown icon"></i>
-                    Filter by Glass Type
+                <div class="ui grid">
+                  <div class="sixteen wide mobile column">
+                    <button class="small ui fluid button glass-button">Cocktail Glass</button>
+                    <br>
+                    <button class="small ui fluid button glass-button">Highball Glass</button>
+                    <br>
+                    <button class="small ui fluid button glass-button">Old-Fashioned Glass</button>
+                    <br>
+                    <button class="small ui fluid button glass-button">Collins Glass</button>
+                    <br>
+                    <button class="small ui fluid button glass-button">Shot Glass</button>
+                    <br>
                   </div>
-                  <div class="content">
-                    <div class="ui toggle checkbox">
-                      <input type="checkbox" name="highball">
-                      <label>Highball Glass</label>
-                    </div>
-                    <br><br>
-                    <div class="ui toggle checkbox">
-                      <input type="checkbox" name="flute">
-                      <label>Cocktail Flute</label>
-                    </div>
-                    <br><br>
-                    <div class="ui toggle checkbox">
-                      <input type="checkbox" name="glass1">
-                      <label>Find</label>
-                    </div>
-                    <br><br>
-                    <div class="ui toggle checkbox">
-                      <input type="checkbox" name="glass2">
-                      <label>Other</label>
-                    </div>
-                    <br><br>
-                    <div class="ui toggle checkbox">
-                      <input type="checkbox" name="glass3">
-                      <label>Glass</label>
-                    </div>
-                </div>
+
                 </div>
               </div>
-            </div><!--/ui accordion-->
-          </div><!--/option column-->
+            </div>
+
+            <div class="ui accordion">
+              <div class="title">
+                <i class="dropdown icon"></i>
+                Search by Spirit
+              </div>
+              <div class="content">
+                <div class="ui grid">
+                  <div class="sixteen wide mobile column">
+                    <button class="small ui fluid button spirit-button">Rum</button>
+                    <br>
+                    <button class="small ui fluid button spirit-button">Gin</button>
+                    <br />
+                    <button class="small ui fluid button spirit-button">Tequila</button>
+                    <br />
+                    <button class="small ui fluid button spirit-button">Brandy</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/ui accordion-->
+          </div>
+          <!--/option column-->
         </div>
-           
 
-
-      
-        <div class="sixteen wide mobile nine wide tablet seven wide computer column">
+        <div
+          class="sixteen wide mobile nine wide tablet seven wide computer column"
+        >
           <div id="results" class="ui segments">
-            
-
-          </div> <!--/ui segments-->
-        </div> <!--results column-->
-      </div> <!--/ui grid-->
+            <div class="ui segment inverted">
+              <h3>Recommended Drink:</h3>
+            </div>
+            <div class="ui segment">
+              <div class="ui grid">
+                <div class="six wide mobile column">
+                  <img class="ui bordered medium image" src="https://www.thecocktaildb.com/images/media/drink/qtvvyq1439905913.jpg">
+                </div>
+                <div class="ten wide mobile column">
+                  <h3>Blue Margarita</h3>
+                </div>
+              </div>
+              <div class="ui grid">
+                <div class="sixteen wide mobile column">
+                  <h5>Instructions</h5>
+                  <p>Rub rim of cocktail glass with lime juice. Dip rim in coarse salt. Shake tequila, blue curacao, and lime juice with ice, strain into the salt-rimmed glass, and serve.</p>
+                  <table class="ui striped table">
+                    <thead>
+                      <tr>
+                        <th>Ingredients</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="top aligned">
+                        <td>
+                          Tequila
+                          <br>
+                          Blue Curacao
+                          <br>
+                          Lime juice
+                          <br>
+                          Salt
+                          <br>
+                        </td>
+                        <td>
+                          1 1/2 oz <br>1 oz <br>1 oz <br>Coarse <br>
+                        </td>
+                        
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--/ui segments-->
+        </div>
+        <!--results column-->
+      </div>
+      <!--/ui grid-->
     </div>
 
     <!--jQuery.js-->
