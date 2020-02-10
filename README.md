@@ -9,6 +9,8 @@ Raymond Amparo, Joel Spielberger, Angel Guzman
 
 ### When I enter the website I see a collapsible side bar where I can choose to see the possible cocktails for types of alcohol as well as popular cocktail glass types.
 
+### When I enter the website I see a countdown timer which tells me how much time till 2 am, the typical time that bars close. 
+
 ## The categories of glass types I see are:
 	* Cocktail Glass
 	* Highball Glass
