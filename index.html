@@ -13,11 +13,11 @@
       integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" />
 
     <!--Title-->
     <title>Imbibo: Find Your Favorite Cocktail</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
     <!--Mobile-friendly-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,8 +27,7 @@
     <!-- Side Bar -->
     <div class="ui vertical inverted sidebar menu">
       <a class="active item">saved cocktails</a>
-      <div id="saved-cocktails">
-      </div>
+      <div id="saved-cocktails"></div>
       <a class="active item manage-saved">manage saved</a>
     </div>
 
@@ -37,27 +36,26 @@
       <div class="ui inverted vertical masthead center aligned segment">
         <div class="ui container">
           <div class="ui large secondary inverted pointing menu">
-            <a class="toc item">
-              <i class="save icon"></i>saved cocktails
-            </a>
+            <a class="toc item"> <i class="save icon"></i>saved cocktails </a>
             <div class="right item">
-              <a class="ui inverted button find-bars-button"><i class="cocktail icon"></i>bars nearby</a>
+              <a class="ui inverted button find-bars-button"
+                ><i class="cocktail icon"></i>bars nearby</a
+              >
             </div>
           </div>
         </div>
 
         <div class="ui inverted very padded segment">
-          <img class="ui centered small image" src="logo.png">
-          <h2>search for a <span style="color: hotpink">cocktail</span> or an <span style="color: hotpink">ingredient</span></h2>
+          <img class="ui centered small image" src="logo.png" />
+          <h2>
+            search for a <span style="color: hotpink">cocktail</span> or an
+            <span style="color: hotpink">ingredient</span>
+          </h2>
           <!--Search: #search-input-->
           <div class="ui search">
             <div class="ui icon input">
-              <input
-                id="search-input"
-                class="prompt"
-                type="text"
-              />
-              <i class="search icon"></i>
+              <input id="search-input" class="prompt" type="text" />
+              <i id="search-icon" class="search icon"></i>
             </div>
             <div class="results"></div>
           </div>
@@ -78,18 +76,27 @@
               <div class="content">
                 <div class="ui grid">
                   <div class="sixteen wide mobile column">
-                    <button class="small ui fluid button glass-button">Cocktail Glass</button>
-                    <br>
-                    <button class="small ui fluid button glass-button">Highball Glass</button>
-                    <br>
-                    <button class="small ui fluid button glass-button">Old-Fashioned Glass</button>
-                    <br>
-                    <button class="small ui fluid button glass-button">Collins Glass</button>
-                    <br>
-                    <button class="small ui fluid button glass-button">Shot Glass</button>
-                    <br>
+                    <button class="small ui fluid button glass-button">
+                      Cocktail Glass
+                    </button>
+                    <br />
+                    <button class="small ui fluid button glass-button">
+                      Highball Glass
+                    </button>
+                    <br />
+                    <button class="small ui fluid button glass-button">
+                      Old-Fashioned Glass
+                    </button>
+                    <br />
+                    <button class="small ui fluid button glass-button">
+                      Collins Glass
+                    </button>
+                    <br />
+                    <button class="small ui fluid button glass-button">
+                      Shot Glass
+                    </button>
+                    <br />
                   </div>
-
                 </div>
               </div>
             </div>
@@ -102,13 +109,21 @@
               <div class="content">
                 <div class="ui grid">
                   <div class="sixteen wide mobile column">
-                    <button class="small ui fluid button spirit-button">Rum</button>
-                    <br>
-                    <button class="small ui fluid button spirit-button">Gin</button>
+                    <button class="small ui fluid button spirit-button">
+                      Rum
+                    </button>
                     <br />
-                    <button class="small ui fluid button spirit-button">Tequila</button>
+                    <button class="small ui fluid button spirit-button">
+                      Gin
+                    </button>
                     <br />
-                    <button class="small ui fluid button spirit-button">Brandy</button>
+                    <button class="small ui fluid button spirit-button">
+                      Tequila
+                    </button>
+                    <br />
+                    <button class="small ui fluid button spirit-button">
+                      Brandy
+                    </button>
                   </div>
                 </div>
               </div>
@@ -128,7 +143,10 @@
             <div class="ui segment">
               <div class="ui grid">
                 <div class="six wide mobile column">
-                  <img class="ui bordered medium image" src="https://www.thecocktaildb.com/images/media/drink/qtvvyq1439905913.jpg">
+                  <img
+                    class="ui bordered medium image"
+                    src="https://www.thecocktaildb.com/images/media/drink/qtvvyq1439905913.jpg"
+                  />
                 </div>
                 <div class="ten wide mobile column">
                   <h3>Blue Margarita</h3>
@@ -137,7 +155,11 @@
               <div class="ui grid">
                 <div class="sixteen wide mobile column">
                   <h5>Instructions</h5>
-                  <p>Rub rim of cocktail glass with lime juice. Dip rim in coarse salt. Shake tequila, blue curacao, and lime juice with ice, strain into the salt-rimmed glass, and serve.</p>
+                  <p>
+                    Rub rim of cocktail glass with lime juice. Dip rim in coarse
+                    salt. Shake tequila, blue curacao, and lime juice with ice,
+                    strain into the salt-rimmed glass, and serve.
+                  </p>
                   <table class="ui striped table">
                     <thead>
                       <tr>
@@ -149,18 +171,17 @@
                       <tr class="top aligned">
                         <td>
                           Tequila
-                          <br>
+                          <br />
                           Blue Curacao
-                          <br>
+                          <br />
                           Lime juice
-                          <br>
+                          <br />
                           Salt
-                          <br>
+                          <br />
                         </td>
                         <td>
-                          1 1/2 oz <br>1 oz <br>1 oz <br>Coarse <br>
+                          1 1/2 oz <br />1 oz <br />1 oz <br />Coarse <br />
                         </td>
-                        
                       </tr>
                     </tbody>
                   </table>
